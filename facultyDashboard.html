@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @media screen and (max-width: 768px) {
+            body > div {
+                padding: 30px !important;
+                margin: 10px auto !important;
+                max-width: 100% !important;
+            }
+
+            h2 {
+                font-size: 24px !important;
+            }
+
+            a {
+                font-size: 16px !important;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            body > div {
+                padding: 20px !important;
+            }
+
+            h2 {
+                font-size: 22px !important;
+            }
+
+            a {
+                font-size: 14px !important;
+                padding: 14px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="background: white; padding: 50px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); max-width: 500px; text-align: center;">
+        <h2 style="color: #667eea; margin-bottom: 10px; font-size: 32px;">📊 Faculty Dashboard</h2>
+        <div style="margin-bottom: 30px;">
+            <div id="currentDate" style="font-size: 14px; color: #666; margin-bottom: 3px;"></div>
+            <div id="currentTime" style="font-size: 13px; color: #999;"></div>
+        </div>
+        <div><a href="markAttendance.html" style="font-size: 18px;">✓ Mark Attendance</a></div>
+        <div><a href="showAnalytics.html" style="font-size: 18px;">📈 Show Analytics</a></div>
+    </div>
+    
+    <script>
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+
+        // Update time every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+    </script>
+</body>
+
+</html>

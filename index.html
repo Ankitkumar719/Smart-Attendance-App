@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: sans-serif; background-color: #f0f2f5; }
+        .login-container { background: white; padding: 50px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); max-width: 500px; margin: 20px auto; box-sizing: border-box; }
+        .login-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; flex-wrap: wrap; gap: 15px; }
+        .login-header h1 { color: #667eea; font-size: 36px; margin: 0 0 10px 0; }
+        .login-header p { color: #666; font-size: 16px; margin: 0; }
+        .time-display { text-align: right; }
+        .role-tabs-container { display: flex; gap: 10px; margin-bottom: 30px; }
+        .role-tab { flex: 1; min-width: 100px; padding: 12px; background: transparent; color: #666; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .role-tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important; color: white !important; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        label { display: block; margin-bottom: 8px; color: #444; font-weight: 600; font-size: 14px; text-transform: uppercase; }
+        input { width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        button[type="submit"] { width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: 600; }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div>
+                <h1>🎓 Smart Attendance</h1>
+                <p>Login to continue</p>
+            </div>
+            <div class="time-display">
+                <div id="currentDate"></div>
+                <div id="currentTime"></div>
+            </div>
+        </div>
+
+        <div class="role-tabs-container">
+            <button id="facultyRoleBtn" class="role-tab" onclick="selectRole('faculty')">👨‍🏫 Faculty</button>
+            <button id="studentRoleBtn" class="role-tab" onclick="selectRole('student')">👨‍🎓 Student</button>
+            <button id="adminRoleBtn" class="role-tab" onclick="selectRole('admin')">🔐 Admin</button>
+        </div>
+
+        <form id="loginForm">
+            <div style="margin-bottom: 20px;">
+                <label for="userId" id="userIdLabel"></label>
+                <input type="text" id="userId" name="userId" required>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <label for="password">PASSWORD</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+            <button type="submit" id="loginBtn"></button>
+        </form>
+    </div>
+
+    <script>
+        let currentRole = 'faculty';
+
+        function selectRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(role + 'RoleBtn').classList.add('active');
+
+            const roles = { 
+                faculty: { label: 'FACULTY ID', button: 'Login as Faculty', placeholder: 'Enter your Faculty ID' },
+                student: { label: 'STUDENT ID', button: 'Login as Student', placeholder: 'Enter your Student ID' },
+                admin: { label: 'ADMIN ID', button: 'Login as Admin', placeholder: 'Enter your Admin ID' }
+            };
+
+            document.getElementById('userIdLabel').textContent = roles[role].label;
+            document.getElementById('loginBtn').textContent = roles[role].button;
+            document.getElementById('userId').placeholder = roles[role].placeholder;
+            document.getElementById('loginForm').reset();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('userId').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) { alert('Please enter both ID and password'); return; }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, role: currentRole })
+                });
+
+                if (response.ok) {
+                    const { token } = await response.json();
+                    sessionStorage.setItem('authToken', token);
+                    sessionStorage.setItem('userRole', currentRole);
+
+                    let redirectUrl;
+                    if (currentRole === 'admin') redirectUrl = 'adminDashboard.html';
+                    else if (currentRole === 'faculty') redirectUrl = 'facultyDashboard.html';
+                    else if (currentRole === 'student') redirectUrl = 'studentDashboard.html';
+                    
+                    window.location.href = redirectUrl;
+                } else {
+                    const error = await response.json();
+                    alert(`Login Failed: ${error.msg || 'Invalid credentials.'}`);
+                }
+            } catch (err) {
+                alert('Could not connect to server. Please ensure it is running.');
+            }
+        });
+        
+        function updateDateTime() { /* ... unchanged ... */ }
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        selectRole('faculty');
+    </script>
+</body>
+
+</html>

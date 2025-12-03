@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="database.js"></script>
+</head>
+<body>
+    <h2>Faculty Login</h2>
+    <form id="facultyLoginForm">
+        <label for="facultyId">Faculty ID:</label><br>
+        <input type="text" id="facultyId" name="facultyId" required><br><br>
+        
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <input type="submit" value="Login">
+    </form>
+    <script>
+        document.getElementById('facultyLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const facultyId = document.getElementById('facultyId').value;
+            const password = document.getElementById('password').value;
+            
+            const result = await db.authenticateFaculty(facultyId, password);
+            
+            if (result.success) {
+                sessionStorage.setItem('facultyId', facultyId);
+                sessionStorage.setItem('facultyName', result.data.name);
+                sessionStorage.setItem('facultyDepartment', result.data.department);
+                window.location.href = 'facultyDashboard.html';
+            } else {
+                alert(result.message || 'Invalid credentials');
+            }
+        });
+    </script>
+</body>
+</html>

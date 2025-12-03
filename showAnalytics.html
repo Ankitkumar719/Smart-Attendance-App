@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="database.js"></script>
+    <style>
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: white;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23667eea%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: .65em auto;
+        }
+        input.form-input {
+            background-image: none;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        @media screen and (max-width: 768px) {
+            body > div {
+                padding: 20px !important;
+                margin: 10px auto !important;
+                max-width: 100% !important;
+            }
+
+            div[style*="display: grid"][style*="grid-template-columns"] {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            button {
+                font-size: 14px !important;
+                padding: 12px !important;
+            }
+
+            #analyticsResults p {
+                font-size: 14px !important;
+                padding: 12px !important;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            body > div {
+                padding: 15px !important;
+            }
+
+            h2 {
+                font-size: 24px !important;
+            }
+
+            h3, h4 {
+                font-size: 20px !important;
+            }
+
+            select, input {
+                font-size: 14px !important;
+                padding: 12px 15px !important;
+            }
+
+            button {
+                font-size: 13px !important;
+                padding: 10px !important;
+            }
+
+            #analyticsResults p {
+                font-size: 13px !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); max-width: 700px; margin: 20px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 10px;">
+            <h2 style="color: #667eea; font-size: 32px; margin: 0;">📈 Attendance Analytics</h2>
+            <div style="text-align: right;">
+                <div id="currentDate" style="font-size: 16px; font-weight: 600; color: #333;"></div>
+                <div id="currentTime" style="font-size: 14px; color: #666;"></div>
+            </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+            <div>
+                <label for="department" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Department:</label>
+                <select name="department" id="department" class="form-input">
+                    <option value="cse">CSE</option>
+                    <option value="cse-aids">CSE-AIDS</option>
+                    <option value="cse-cs">CSE-CS</option>
+                    <option value="cse-it">CSE-IT</option>
+                    <option value="ece">ECE</option>
+                    <option value="eee">EEE</option>
+                    <option value="mech">MECH</option>
+                    <option value="civil">CIVIL</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="semester" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Semester:</label>
+                <select name="semester" id="semester" class="form-input">
+                    <option value="1">I</option>
+                    <option value="2">II</option>
+                    <option value="3">III</option>
+                    <option value="4">IV</option>
+                    <option value="5">V</option>
+                    <option value="6">VI</option>
+                    <option value="7">VII</option>
+                    <option value="8">VIII</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="section" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Section:</label>
+                <select name="section" id="section" class="form-input">
+                    <option value="A1">Section A1</option>
+                    <option value="A2">Section A2</option>
+                    <option value="A3">Section A3</option>
+                    <option value="A4">Section A4</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="subject" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Subject:</label>
+                <select name="subject" id="subject" class="form-input">
+                    <option value="" disabled selected>Select Semester First</option>
+                </select>
+            </div>
+
+            <div style="grid-column: span 2;">
+                <label for="date" style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px;">Date:</label>
+                <input type="date" id="date" name="date" class="form-input">
+            </div>
+        </div>
+
+        <button type="submit" style="width: 100%; margin-bottom: 30px;">🔍 Search Analytics</button>
+        
+        <div id="analyticsResults" style="margin-top: 30px;"></div>
+    </div>
+
+    <script>
+        // Subject data by semester
+        const subjectsBySemester = {
+            '1': [
+                { code: 'BT101', name: 'Engineering Chemistry' },
+                { code: 'BT102', name: 'M1' },
+                { code: 'BT103', name: 'English for Communication' },
+                { code: 'BT104', name: 'Basic Electrical & Electronics Engineering' },
+                { code: 'BT105', name: 'Engineering Graphics' },
+                { code: 'BT106', name: 'Manufacturing Practices' }
+            ],
+            '2': [
+                { code: 'BT201', name: 'Engineering Physics' },
+                { code: 'BT202', name: 'Mathematics-II' },
+                { code: 'BT203', name: 'Basic Mechanical Engineering' },
+                { code: 'BT204', name: 'Basic Civil Engineering & Mechanics' },
+                { code: 'BT205', name: 'Basic Computer Engineering' }
+            ],
+            '3': [
+                { code: 'ES301', name: 'Energy & Environmental Engineering' },
+                { code: 'CS302', name: 'Discrete Structure' },
+                { code: 'CS303', name: 'Data Structure' },
+                { code: 'CS304', name: 'Digital Systems' },
+                { code: 'CS305', name: 'Object Oriented Programming & Methodology' },
+                { code: 'CS306', name: 'Data Structure Lab' },
+                { code: 'CS307', name: 'Digital Systems Lab' },
+                { code: 'CS308', name: 'Object Oriented Programming Lab' }
+            ],
+            '4': [
+                { code: 'BT401', name: 'Mathematics-III' },
+                { code: 'CS402', name: 'Analysis Design of Algorithm' },
+                { code: 'CS403', name: 'Software Engineering' },
+                { code: 'CS404', name: 'Computer Org. & Architecture' },
+                { code: 'CS405', name: 'Operating Systems' },
+            ],
+            '5': [
+                { code: 'CS501', name: 'Theory of Computation' },
+                { code: 'CS502', name: 'Database Management Systems' },
+                { code: 'CS503-B', name: 'CS503 (B) Pattern Recognition' },
+                { code: 'CS504-A', name: 'CS504 (A) Internet and Web Technology' },
+                { code: 'CS505', name: 'Linux (Lab)' },
+                { code: 'CS506', name: 'Database Management Systems Lab' },
+                { code: 'CS507', name: 'Minor Project' }
+            ],
+            '6': [
+                { code: 'CS601', name: 'Machine Learning' },
+                { code: 'CS602', name: 'Computer Networks' },
+                { code: 'CS603-C', name: 'Compiler Design' },
+                { code: 'CS604-B', name: 'Project Management' },
+                { code: 'CS605', name: 'Data Analytics Lab' },
+                { code: 'CS606', name: 'Skill Development Lab' },
+            ],
+            '7': [
+                { code: 'CS701', name: 'Software Architectures' },
+                { code: 'CS702-A', name: 'CS702 (A) Computational Intelligence' },
+                { code: 'CS703-A', name: 'CS703 (A) Cryptography & Information Security' },
+                { code: 'CS704', name: 'Major Project – Phase I' }
+            ],
+            '8': [
+                { code: 'CS801', name: 'Internet of Things' },
+                { code: 'CS802-B', name: 'Cloud Computing' },
+                { code: 'CS803-A', name: 'Image Processing and Computer Vision#' }
+            ]
+        };
+
+        // Update subjects when semester changes
+        const semesterSelect = document.getElementById('semester');
+        semesterSelect.addEventListener('change', function() {
+            const semester = this.value;
+            const subjectSelect = document.getElementById('subject');
+            
+            subjectSelect.innerHTML = '<option value="" disabled selected>Select Subject</option>';
+            
+            const subjects = subjectsBySemester[semester];
+            
+            if (subjects) {
+                subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.code.toLowerCase();
+                    option.textContent = `${subject.code} – ${subject.name}`;
+                    subjectSelect.appendChild(option);
+                });
+            } else {
+                subjectSelect.innerHTML = '<option value="" disabled selected>No subjects available for this semester</option>';
+            }
+        });
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+
+        // Update time every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        document.querySelector('button[type="submit"]').addEventListener('click', function() {
+            const department = document.getElementById('department').value;
+            const semester = document.getElementById('semester').value;
+            const section = document.getElementById('section').value;
+            const subject = document.getElementById('subject').value;
+            const date = document.getElementById('date').value;
+
+            const classKey = `${department}-${semester}-${section}-${subject}`;
+            const classData = db.getClassData(department, semester, section, subject);
+            const totalStudents = classData.totalStudents || 60;
+            let classRecords = db.getAttendanceHistory(classKey, date);
+            
+            const totalClasses = classRecords.length;
+            let avgAttendance = 0;
+            
+            if (totalClasses > 0) {
+                const totalPercentage = classRecords.reduce((sum, record) => sum + parseFloat(record.percentage), 0);
+                avgAttendance = (totalPercentage / totalClasses).toFixed(2);
+            }
+            
+            const resultsDiv = document.getElementById('analyticsResults');
+            
+            if (totalClasses === 0) {
+                resultsDiv.innerHTML = `
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; color: white; margin-bottom: 20px;">
+                        <h3 style="margin: 0; font-size: 24px; color: white;">⚠️ No Attendance Records Found</h3>
+                    </div>
+                    <div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 12px;">
+                        <p style="font-size: 16px; color: #666;">No attendance was recorded for the selected criteria.</p>
+                        <p style="font-size: 14px; color: #999; margin-top: 10px;">Department: ${department.toUpperCase()} | Semester: ${semester} | Section: ${section} | Subject: ${subject}${date ? ` | Date: ${date}` : ''}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let recordsHTML = '';
+            classRecords.forEach((record, index) => {
+                const recordDate = new Date(record.date);
+                const dateStr = recordDate.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                const timeStr = recordDate.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                recordsHTML += `
+                    <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #667eea;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 8px;">
+                            <strong style="color: #667eea; font-size: 16px;">Class ${index + 1}</strong>
+                            <span style="color: #666; font-size: 13px;">📅 ${dateStr} ⏰ ${timeStr}</span>
+                        </div>
+                        <p style="margin: 5px 0;">Present: <span style="color: #4caf50; font-weight: bold;">${record.present}</span> | Absent: <span style="color: #f44336; font-weight: bold;">${record.absent}</span> | Attendance: <span style="color: #ff9800; font-weight: bold;">${record.percentage}%</span></p>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = `
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; color: white; margin-bottom: 20px;">
+                    <h3 style="margin: 0; font-size: 24px; color: white;">✅ Analytics Results</h3>
+                </div>
+                <div style="display: grid; gap: 12px;">
+                    <p style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 0;"><strong>Department:</strong> ${department.toUpperCase()}</p>
+                    <p style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 0;"><strong>Semester:</strong> ${semester}</p>
+                    <p style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 0;"><strong>Section:</strong> ${section}</p>
+                    <p style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 0;"><strong>Subject:</strong> ${subject}</p>
+                    ${date ? `<p style="background: #f0f4ff; padding: 15px; border-radius: 8px; margin: 0;"><strong>Date:</strong> ${date}</p>` : ''}
+                    <p style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 0;"><strong>Total Students:</strong> ${totalStudents}</p>
+                    <p style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin: 0;"><strong>Total Classes Conducted:</strong> ${totalClasses}</p>
+                    <p style="background: #fff3e0; padding: 15px; border-radius: 8px; margin: 0;"><strong>Average Attendance:</strong> <span style="font-size: 20px; color: #ff9800;">${avgAttendance}%</span></p>
+                </div>
+                <div style="margin-top: 30px;">
+                    <h4 style="color: #667eea; margin-bottom: 15px;">Class-wise Attendance Records:</h4>
+                    ${recordsHTML}
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Details</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); max-width: 800px; margin: 20px auto; }
+        .dashboard-header h1 { color: #667eea; font-size: 32px; margin: 0 0 30px 0; text-align: center; }
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-item { background: #f9f9f9; border-radius: 12px; padding: 35px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .grid-item:hover { transform: translateY(-5px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+        .grid-item h3 { margin: 15px 0 0 0; color: #333; }
+        .grid-item .icon { font-size: 48px; }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: 1fr; /* Stack the items vertically */
+            }
+            .dashboard-container {
+                padding: 20px;
+            }
+            .dashboard-header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>✏️ Update Details</h1>
+        </div>
+
+        <div class="grid-container">
+            <!-- Update Student -->
+            <div class="grid-item" onclick="alert('Navigate to Update Student Page')">
+                <div class="icon">👨‍🎓</div>
+                <h3>Update Student</h3>
+            </div>
+
+            <!-- Update Faculty -->
+            <div class="grid-item" onclick="alert('Navigate to Update Faculty Page')">
+                <div class="icon">👨‍🏫</div>
+                <h3>Update Faculty</h3>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Faculty</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); max-width: 600px; margin: 20px auto; }
+        .form-header h1 { color: #667eea; font-size: 32px; margin: 0 0 30px 0; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: 1 / -1; }
+        label { display: block; margin-bottom: 8px; color: #444; font-weight: 600; font-size: 14px; }
+        input, select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: border-color 0.3s; }
+        input:focus, select:focus { outline: none; border-color: #667eea; }
+        button[type="submit"] { width: 100%; margin-top: 10px; grid-column: 1 / -1; }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr; /* Stack the form fields */
+            }
+             .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>👨‍🏫 Add New Faculty</h1>
+        </div>
+
+        <form id="addFacultyForm">
+            <div class="form-grid">
+                <div class="full-width">
+                    <label for="facultyName">Full Name</label>
+                    <input type="text" id="facultyName" required placeholder="e.g., Dr. John Smith">
+                </div>
+                <div>
+                    <label for="facultyId">Faculty ID (Login ID)</label>
+                    <input type="text" id="facultyId" required placeholder="e.g., FAC002">
+                </div>
+                 <div>
+                    <label for="password">Set Password</label>
+                    <input type="password" id="password" required placeholder="Set a secure password">
+                </div>
+                <div>
+                    <label for="department">Department</label>
+                    <select id="department" required>
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="cse">CSE</option>
+                        <option value="ece">ECE</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="branch">Branch</label>
+                    <select id="branch" required>
+                        <option value="" disabled selected>Select Branch</option>
+                        <option value="cse">CSE</option>
+                        <option value="ece">ECE</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="semester">Semester</label>
+                    <select id="semester" required>
+                        <option value="" disabled selected>Select Semester</option>
+                        <option value="1">I</option>
+                        <option value="2">II</option>
+                        <option value="3">III</option>
+                        <option value="4">IV</option>
+                        <option value="5">V</option>
+                    </select>
+                </div>
+                <div class="full-width">
+                    <label for="mobileNo">Mobile No</label>
+                    <input type="tel" id="mobileNo" placeholder="Optional">
+                </div>
+                <button type="submit">Add Faculty</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+         // The JavaScript logic for this form is already correct
+        // and does not need to be changed for responsiveness.
+    </script>
+</body>
+
+</html>

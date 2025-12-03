@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        /* ... styles ... */
+        button:disabled { background: #ccc !important; cursor: not-allowed !important; }
+    </style>
+</head>
+
+<body>
+    <div class="form-container" style="max-width: 700px;">
+        <!-- Header -->
+        <div id="qrCodeContainer" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        const subjectSelect = document.getElementById('subject');
+        const generateQRBtn = document.getElementById('generateQRBtn');
+        let qrRefreshInterval = null;
+
+        // On Page Load: Fetch subjects for the default semester
+        document.addEventListener('DOMContentLoaded', () => {
+            // You would fetch the faculty's assigned subjects here
+            // For now, we will use a static list
+            const subjects = [
+                { id: 1, name: 'Theory of Computation', code: 'CS-501' },
+                { id: 2, name: 'Database Management', code: 'CS-502' },
+            ];
+            subjects.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub.id;
+                option.textContent = `${sub.code} - ${sub.name}`;
+                subjectSelect.appendChild(option);
+            });
+        });
+
+        generateQRBtn.addEventListener('click', async function() {
+            const subjectId = subjectSelect.value;
+            if (!subjectId) {
+                alert('Please select a subject.');
+                return;
+            }
+
+            try {
+                // 1. Create a new session on the backend
+                const response = await fetch('http://localhost:5000/api/faculty/sessions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({ 
+                        subject_id: subjectId, 
+                        // You would get branch/sem/section from faculty data
+                        branch: 'CSE', 
+                        semester: 5,
+                        section: 'A',
+                        date: new Date().toISOString().slice(0, 10)
+                    })
+                });
+
+                if (!response.ok) throw new Error('Failed to create session.');
+
+                const { sessionId } = await response.json();
+
+                // 2. Start the QR code generation loop
+                startQRGeneration(sessionId);
+
+            } catch (err) {
+                alert('Error: Could not start session. Is the server running?');
+            }
+        });
+
+        async function startQRGeneration(sessionId) {
+            const qrContainer = document.getElementById('qrCodeContainer');
+            generateQRBtn.disabled = true; // Disable button while session is active
+
+            if (qrRefreshInterval) clearInterval(qrRefreshInterval);
+
+            async function fetchAndDisplayQR() {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/faculty/sessions/${sessionId}/token`, {
+                        headers: { 'Authorization': `Bearer ${sessionStorage.getItem('authToken')}` }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to get QR token.');
+
+                    const { token, expiresAt } = await response.json();
+                    
+                    qrContainer.innerHTML = '<div id="qrcode"></div>'; // Clear and add container
+                    new QRCode(document.getElementById("qrcode"), {
+                        text: token,
+                        width: 256,
+                        height: 256,
+                    });
+
+                    // Countdown timer logic can be added here based on expiresAt
+
+                } catch (err) {
+                    console.error("QR Fetch Error:", err);
+                    clearInterval(qrRefreshInterval); // Stop loop on error
+                }
+            }
+
+            fetchAndDisplayQR(); // Initial call
+            qrRefreshInterval = setInterval(fetchAndDisplayQR, 30000); // Refresh every 30s
+        }
+    </script>
+</body>
+
+</html>

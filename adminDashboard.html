@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .dashboard-container { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); max-width: 800px; margin: 20px auto; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
+        .dashboard-header h1 { color: #667eea; font-size: 32px; margin: 0; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .grid-item { background: #f9f9f9; border-radius: 12px; padding: 25px; border-left: 5px solid #667eea; cursor: pointer; transition: all 0.3s ease; }
+        .grid-item:hover { transform: translateY(-5px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); border-left-color: #764ba2; }
+        .grid-item h3 { margin-top: 0; margin-bottom: 10px; color: #333; }
+        .grid-item p { color: #666; font-size: 14px; margin: 0; }
+        #logoutBtn { background: #f44336; color: white; padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        #logoutBtn:hover { background: #d32f2f; }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>🔐 Admin Dashboard</h1>
+            <button id="logoutBtn">Logout</button>
+        </div>
+
+        <div class="grid-container">
+            <!-- Add Faculty -->
+            <div class="grid-item" onclick="window.location.href='addFaculty.html'">
+                <h3>👨‍🏫 Add Faculty</h3>
+                <p>Create new accounts for faculty members.</p>
+            </div>
+
+            <!-- Add Student -->
+            <div class="grid-item" onclick="window.location.href='addStudent.html'">
+                <h3>👨‍🎓 Add Student</h3>
+                <p>Enroll new students into the system.</p>
+            </div>
+
+            <!-- Add Subjects -->
+            <div class="grid-item" onclick="window.location.href='addSubject.html'">
+                <h3>📚 Add Subjects</h3>
+                <p>Define new subjects and course codes.</p>
+            </div>
+
+            <!-- Update Details -->
+            <div class="grid-item" onclick="window.location.href='updateDetails.html'">
+                <h3>✏️ Update Details</h3>
+                <p>Modify existing user or class information.</p>
+            </div>
+
+            <!-- View Attendance -->
+            <div class="grid-item" onclick="window.location.href='showAnalytics.html'">
+                <h3>📈 View Attendance</h3>
+                <p>Monitor attendance records across all classes.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>

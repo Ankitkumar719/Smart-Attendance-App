@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="database.js"></script>
+</head>
+
+<body>
+    <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); max-width: 900px; margin: 20px auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <h2 style="color: #667eea; font-size: 32px; margin: 0;">👨‍🎓 Student Dashboard</h2>
+                <div style="margin-top: 5px;">
+                    <div id="currentDate" style="font-size: 14px; color: #666;"></div>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div id="studentName" style="font-size: 18px; font-weight: 600; color: #333;"></div>
+                <div id="studentId" style="font-size: 14px; color: #666;"></div>
+                <div id="currentTime" style="font-size: 13px; color: #999; margin-top: 3px;"></div>
+            </div>
+        </div>
+
+        <!-- Attendance Statistics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 12px; text-align: center; color: white;">
+                <div style="font-size: 14px; margin-bottom: 10px; opacity: 0.9;">Average Attendance</div>
+                <div id="avgAttendance" style="font-size: 36px; font-weight: bold;">--%</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #4caf50 0%, #45a049 100%); padding: 25px; border-radius: 12px; text-align: center; color: white;">
+                <div style="font-size: 14px; margin-bottom: 10px; opacity: 0.9;">Total Classes</div>
+                <div id="totalClasses" style="font-size: 36px; font-weight: bold;">0</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%); padding: 25px; border-radius: 12px; text-align: center; color: white;">
+                <div style="font-size: 14px; margin-bottom: 10px; opacity: 0.9;">Lowest Attendance</div>
+                <div id="lowestAttendance" style="font-size: 36px; font-weight: bold;">--%</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #e0e0e0;">
+            <button id="scanTab" class="tab-button active" onclick="showTab('scan')" style="flex: 1; padding: 15px; background: none; border: none; border-bottom: 3px solid #667eea; color: #667eea; font-weight: 600; cursor: pointer;">
+                📱 Scan QR Code
+            </button>
+            <button id="attendanceTab" class="tab-button" onclick="showTab('attendance')" style="flex: 1; padding: 15px; background: none; border: none; border-bottom: 3px solid transparent; color: #666; font-weight: 600; cursor: pointer;">
+                📊 My Attendance
+            </button>
+        </div>
+
+        <!-- Scan QR Tab -->
+        <div id="scanContent" class="tab-content">
+            <div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 12px;">
+                <div style="font-size: 80px; margin-bottom: 20px;">📷</div>
+                <h3 style="color: #667eea; margin-bottom: 15px;">Scan QR Code to Mark Attendance</h3>
+                <p style="color: #666; margin-bottom: 30px;">Faculty will generate a QR code in class. Scan it to mark your attendance.</p>
+                
+                <input type="text" id="qrCodeInput" placeholder="Enter QR Code or Faculty QR ID" style="width: 100%; max-width: 400px; padding: 15px; margin-bottom: 20px; border: 2px solid #667eea; border-radius: 8px; font-size: 16px;">
+                
+                <button onclick="scanQRCode()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 40px; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: 600;">
+                    ✓ Submit Attendance
+                </button>
+                
+                <div id="scanResult" style="margin-top: 30px;"></div>
+            </div>
+        </div>
+
+        <!-- Attendance Records Tab -->
+        <div id="attendanceContent" class="tab-content" style="display: none;">
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #667eea; margin-bottom: 20px;">📚 Class-wise Attendance</h3>
+                <div id="classAttendanceList"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .tab-button.active {
+            border-bottom-color: #667eea !important;
+            color: #667eea !important;
+        }
+
+        .tab-button:hover {
+            background: #f5f5f5;
+        }
+
+        .attendance-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .attendance-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            body > div {
+                padding: 20px !important;
+                margin: 10px auto !important;
+            }
+
+            div[style*="display: grid"][style*="grid-template-columns: repeat(3"] {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            div[style*="display: flex"][style*="justify-content: space-between"] {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+            }
+
+            .tab-button {
+                font-size: 12px !important;
+                padding: 12px !important;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            body > div {
+                padding: 15px !important;
+                border-radius: 12px !important;
+            }
+
+            h2 {
+                font-size: 24px !important;
+            }
+
+            h3 {
+                font-size: 18px !important;
+            }
+
+            div[style*="font-size: 36px"] {
+                font-size: 28px !important;
+            }
+
+            div[style*="font-size: 80px"] {
+                font-size: 50px !important;
+            }
+
+            input[type="text"] {
+                padding: 12px !important;
+                font-size: 14px !important;
+            }
+
+            button {
+                padding: 12px 24px !important;
+                font-size: 14px !important;
+            }
+
+            .tab-button {
+                font-size: 11px !important;
+                padding: 10px !important;
+            }
+        }
+    </style>
+
+    <script>
+        let currentStudent = null;
+        let studentAttendanceData = {};
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+
+        // Check if student is logged in
+        window.onload = function() {
+            const studentId = sessionStorage.getItem('studentId');
+            const studentName = sessionStorage.getItem('studentName');
+            
+            if (!studentId) {
+                alert('Please login first!');
+                window.location.href = 'studentLogin.html';
+                return;
+            }
+
+            currentStudent = {
+                studentId: studentId,
+                name: studentName || studentId
+            };
+
+            document.getElementById('studentName').textContent = currentStudent.name;
+            document.getElementById('studentId').textContent = currentStudent.studentId;
+
+            // Start updating date/time
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            loadStudentAttendance();
+        };
+
+        // Show/Hide Tabs
+        function showTab(tabName) {
+            const scanContent = document.getElementById('scanContent');
+            const attendanceContent = document.getElementById('attendanceContent');
+            const scanTab = document.getElementById('scanTab');
+            const attendanceTab = document.getElementById('attendanceTab');
+
+            if (tabName === 'scan') {
+                scanContent.style.display = 'block';
+                attendanceContent.style.display = 'none';
+                scanTab.classList.add('active');
+                attendanceTab.classList.remove('active');
+            } else {
+                scanContent.style.display = 'none';
+                attendanceContent.style.display = 'block';
+                scanTab.classList.remove('active');
+                attendanceTab.classList.add('active');
+            }
+        }
+
+        // Scan QR Code
+        function scanQRCode() {
+            const qrInput = document.getElementById('qrCodeInput').value.trim();
+            const scanResult = document.getElementById('scanResult');
+
+            if (!qrInput) {
+                scanResult.innerHTML = `
+                    <div style="background: #ffebee; padding: 20px; border-radius: 8px; color: #d32f2f;">
+                        ⚠️ Please enter a QR code or scan ID
+                    </div>
+                `;
+                return;
+            }
+
+            // Simulate QR code scanning - In real app, this would decode QR data
+            // For demo: Faculty generates QR with classKey format
+            // Expected format: "cse-1-A1-cs-501" or similar
+
+            const allHistory = db.getAttendanceHistory();
+            let matchedClass = null;
+            let latestRecord = null;
+
+            // Search for active QR code (most recent attendance record for any class)
+            Object.keys(allHistory).forEach(classKey => {
+                const records = allHistory[classKey];
+                if (records && records.length > 0) {
+                    const lastRecord = records[records.length - 1];
+                    const timeDiff = (new Date() - new Date(lastRecord.date)) / (1000 * 60); // minutes
+                    
+                    // QR code valid for 30 minutes
+                    if (timeDiff < 30) {
+                        if (!latestRecord || new Date(lastRecord.date) > new Date(latestRecord.date)) {
+                            latestRecord = lastRecord;
+                            matchedClass = classKey;
+                        }
+                    }
+                }
+            });
+
+            if (matchedClass) {
+                // Mark attendance
+                const alreadyMarked = latestRecord.scannedStudents && latestRecord.scannedStudents.includes(currentStudent.studentId);
+                
+                if (alreadyMarked) {
+                    scanResult.innerHTML = `
+                        <div style="background: #fff3e0; padding: 20px; border-radius: 8px; color: #f57c00;">
+                            ℹ️ You have already marked attendance for this session!
+                            <div style="margin-top: 10px; font-size: 14px;">Class: ${matchedClass}</div>
+                        </div>
+                    `;
+                } else {
+                    // Add student to attendance
+                    latestRecord.scannedStudents.push(currentStudent.studentId);
+                    latestRecord.present++;
+                    latestRecord.absent--;
+                    latestRecord.percentage = ((latestRecord.present / latestRecord.totalStudents) * 100).toFixed(2);
+                    
+                    db.saveAttendanceRecord(matchedClass, latestRecord);
+                    db.saveStudentAttendance(currentStudent.studentId, matchedClass, new Date().toISOString(), 'present');
+
+                    const scanTime = new Date();
+                    const scanDate = scanTime.toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    const scanTimeStr = scanTime.toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    scanResult.innerHTML = `
+                        <div style="background: #e8f5e9; padding: 20px; border-radius: 8px; color: #2e7d32;">
+                            <div style="font-size: 18px; font-weight: 600; margin-bottom: 10px;">✅ Attendance Marked Successfully!</div>
+                            <div style="margin-top: 10px; font-size: 14px; color: #1b5e20;"><strong>Class:</strong> ${matchedClass}</div>
+                            <div style="font-size: 14px; color: #1b5e20;"><strong>Date:</strong> 📅 ${scanDate}</div>
+                            <div style="font-size: 14px; color: #1b5e20;"><strong>Time:</strong> ⏰ ${scanTimeStr}</div>
+                        </div>
+                    `;
+
+                    // Reload attendance data
+                    setTimeout(() => {
+                        loadStudentAttendance();
+                        document.getElementById('qrCodeInput').value = '';
+                    }, 2000);
+                }
+            } else {
+                scanResult.innerHTML = `
+                    <div style="background: #ffebee; padding: 20px; border-radius: 8px; color: #d32f2f;">
+                        ❌ Invalid or Expired QR Code
+                        <div style="margin-top: 10px; font-size: 14px;">Please scan the QR code shown by your faculty within 30 minutes.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Student Attendance
+        function loadStudentAttendance() {
+            const allHistory = db.getAttendanceHistory();
+            const allClasses = db.getAllClasses();
+            studentAttendanceData = {};
+
+            let totalClassesAttended = 0;
+            let totalClasses = 0;
+            let classCount = 0;
+            let lowestPercentage = 100;
+
+            // Calculate attendance for each class
+            Object.keys(allHistory).forEach(classKey => {
+                const records = allHistory[classKey];
+                const classData = allClasses[classKey];
+                
+                let present = 0;
+                let total = records.length;
+
+                records.forEach(record => {
+                    if (record.scannedStudents && record.scannedStudents.includes(currentStudent.studentId)) {
+                        present++;
+                        totalClassesAttended++;
+                    }
+                    totalClasses++;
+                });
+
+                if (total > 0) {
+                    const percentage = ((present / total) * 100).toFixed(2);
+                    studentAttendanceData[classKey] = {
+                        courseName: classData?.courseName || classKey,
+                        present: present,
+                        total: total,
+                        percentage: parseFloat(percentage)
+                    };
+
+                    if (percentage < lowestPercentage) {
+                        lowestPercentage = percentage;
+                    }
+                    classCount++;
+                }
+            });
+
+            // Update statistics
+            const avgPercentage = classCount > 0 ? ((totalClassesAttended / totalClasses) * 100).toFixed(2) : 0;
+            document.getElementById('avgAttendance').textContent = avgPercentage + '%';
+            document.getElementById('totalClasses').textContent = totalClasses;
+            document.getElementById('lowestAttendance').textContent = (classCount > 0 ? lowestPercentage.toFixed(2) : 0) + '%';
+
+            // Display class-wise attendance
+            displayClassAttendance();
+        }
+
+        // Display Class Attendance List
+        function displayClassAttendance() {
+            const container = document.getElementById('classAttendanceList');
+            
+            if (Object.keys(studentAttendanceData).length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: #f9f9f9; border-radius: 12px;">
+                        <div style="font-size: 60px; margin-bottom: 15px;">📚</div>
+                        <p style="color: #666;">No attendance records found yet.</p>
+                        <p style="color: #999; font-size: 14px;">Scan QR codes in class to mark your attendance.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            Object.keys(studentAttendanceData).forEach(classKey => {
+                const data = studentAttendanceData[classKey];
+                let statusColor = '#4caf50';
+                let statusText = 'Good';
+                
+                if (data.percentage < 75) {
+                    statusColor = '#f44336';
+                    statusText = 'Low';
+                } else if (data.percentage < 85) {
+                    statusColor = '#ff9800';
+                    statusText = 'Average';
+                }
+
+                html += `
+                    <div style="background: white; border: 1px solid #e0e0e0; padding: 20px; border-radius: 12px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div>
+                                <div style="font-weight: 600; color: #333; font-size: 16px;">${data.courseName}</div>
+                                <div style="color: #666; font-size: 14px; margin-top: 5px;">${classKey}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 24px; font-weight: bold; color: ${statusColor};">${data.percentage}%</div>
+                                <div style="font-size: 12px; color: ${statusColor};">${statusText}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #666; margin-bottom: 8px;">
+                            <span>Present: ${data.present} / ${data.total}</span>
+                            <span>Absent: ${data.total - data.present}</span>
+                        </div>
+                        <div class="attendance-bar">
+                            <div class="attendance-bar-fill" style="width: ${data.percentage}%; background: ${statusColor};"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+
+</html>

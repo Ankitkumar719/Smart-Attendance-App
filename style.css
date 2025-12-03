@@ -1,0 +1,389 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-attachment: fixed;
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 28px;
+    text-align: center;
+    font-weight: 600;
+}
+
+form {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    max-width: 450px;
+    width: 100%;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #444;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #f9f9f9;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+select:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+input[type="submit"],
+button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+input[type="submit"]:hover,
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+input[type="submit"]:active,
+button:active {
+    transform: translateY(0);
+}
+
+a {
+    display: block;
+    padding: 18px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    margin: 15px 0;
+    text-align: center;
+    max-width: 350px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+div {
+    margin: 10px 0;
+}
+
+.department {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-top: 20px;
+}
+
+#analyticsResults,
+#qrCodeContainer {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    margin-top: 25px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#analyticsResults h3,
+#qrCodeContainer h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+#analyticsResults p {
+    margin: 12px 0;
+    color: #555;
+    font-size: 15px;
+    padding: 8px;
+    border-left: 3px solid #667eea;
+    padding-left: 15px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+#analyticsResults strong {
+    color: #333;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MOBILE FIRST
+   ============================================ */
+
+/* Tablet and below (max-width: 768px) */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 24px !important;
+    }
+
+    h3 {
+        font-size: 20px !important;
+    }
+
+    /* Forms */
+    form {
+        padding: 25px !important;
+        max-width: 100% !important;
+    }
+
+    /* Buttons */
+    button,
+    input[type="submit"] {
+        padding: 12px 20px !important;
+        font-size: 14px !important;
+    }
+
+    /* Links */
+    a {
+        padding: 14px !important;
+        font-size: 14px !important;
+        max-width: 100% !important;
+    }
+
+    /* Grid layouts - convert to single column */
+    div[style*="grid-template-columns: repeat(3"],
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    /* Role selection tabs */
+    .role-tab {
+        padding: 10px !important;
+        font-size: 13px !important;
+    }
+
+    /* Input fields */
+    input[type="text"],
+    input[type="password"],
+    select {
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+
+    /* Dashboard cards */
+    div[style*="padding: 50px"],
+    div[style*="padding: 40px"] {
+        padding: 20px !important;
+    }
+
+    /* Statistics cards */
+    div[style*="font-size: 36px"] {
+        font-size: 28px !important;
+    }
+
+    div[style*="font-size: 32px"] {
+        font-size: 24px !important;
+    }
+
+    /* QR container */
+    div[style*="font-size: 80px"] {
+        font-size: 60px !important;
+    }
+
+    /* Tab buttons */
+    .tab-button {
+        padding: 12px !important;
+        font-size: 13px !important;
+    }
+
+    /* Flex layouts with space-between */
+    div[style*="display: flex"][style*="justify-content: space-between"] {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+}
+
+/* Mobile phones (max-width: 480px) */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+
+    h2 {
+        font-size: 20px !important;
+    }
+
+    h3 {
+        font-size: 18px !important;
+    }
+
+    /* Forms */
+    form {
+        padding: 20px !important;
+    }
+
+    /* Buttons */
+    button,
+    input[type="submit"] {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+
+    /* Input fields */
+    input[type="text"],
+    input[type="password"],
+    select {
+        padding: 10px !important;
+        font-size: 13px !important;
+    }
+
+    /* Statistics cards */
+    div[style*="font-size: 36px"],
+    div[style*="font-size: 28px"] {
+        font-size: 24px !important;
+    }
+
+    div[style*="font-size: 32px"],
+    div[style*="font-size: 24px"] {
+        font-size: 20px !important;
+    }
+
+    /* QR container */
+    div[style*="font-size: 80px"],
+    div[style*="font-size: 60px"] {
+        font-size: 50px !important;
+    }
+
+    /* Role tabs - stack vertically */
+    div[style*="display: flex"][style*="gap: 10px"] {
+        flex-direction: column !important;
+    }
+
+    .role-tab {
+        padding: 12px !important;
+        font-size: 14px !important;
+    }
+
+    /* Tab buttons */
+    .tab-button {
+        padding: 10px !important;
+        font-size: 12px !important;
+    }
+
+    /* Labels */
+    label {
+        font-size: 12px !important;
+    }
+
+    /* Max width containers */
+    div[style*="max-width: 500px"],
+    div[style*="max-width: 700px"],
+    div[style*="max-width: 900px"] {
+        max-width: 100% !important;
+        margin: 10px auto !important;
+    }
+}
+
+/* Large tablets and small desktops (768px - 1024px) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    body {
+        padding: 15px;
+    }
+
+    div[style*="max-width: 900px"] {
+        max-width: 95% !important;
+    }
+
+    /* Grid layouts - 2 columns on medium screens */
+    div[style*="grid-template-columns: repeat(3"] {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Responsive utilities */
+@media screen and (max-width: 768px) {
+    /* Hide less important info on mobile */
+    .hide-mobile {
+        display: none !important;
+    }
+
+    /* Full width on mobile */
+    .full-width-mobile {
+        width: 100% !important;
+    }
+
+    /* Smaller text on mobile */
+    .text-sm-mobile {
+        font-size: 12px !important;
+    }
+}
